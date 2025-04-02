@@ -1,124 +1,121 @@
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import NewsCard from "./NewsCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Sample news data (would be fetched from an API in a real app)
-const dummyNews = [
-  {
-    id: 1,
-    title: "RBI keeps repo rate unchanged at 6.5%, projects GDP growth at 7.2% for FY25",
-    summary: "The Reserve Bank of India (RBI) has maintained its repo rate at 6.5% for the eighth consecutive time, balancing growth concerns with persistent inflation risks.",
-    date: "2023-08-10",
-    source: "Economic Times",
-    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    url: "#"
-  },
-  {
-    id: 2,
-    title: "New PPF rule changes to benefit long-term investors",
-    summary: "The government has announced modifications to Public Provident Fund (PPF) regulations, offering enhanced benefits for investors planning for retirement.",
-    date: "2023-08-05",
-    source: "Financial Express",
-    imageUrl: "https://images.unsplash.com/photo-1589666564472-1011dfaee57e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    url: "#"
-  },
-  {
-    id: 3,
-    title: "Market correction: Is it time to increase your SIP investments?",
-    summary: "Financial experts suggest that market corrections present an opportunity to increase systematic investment plans (SIPs) to benefit from lower entry points.",
-    date: "2023-07-28",
-    source: "Mint",
-    imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    url: "#"
-  },
-  {
-    id: 4,
-    title: "NPS vs EPF: Which is better for retirement planning?",
-    summary: "A comparative analysis of National Pension System (NPS) and Employee Provident Fund (EPF) to help investors make informed decisions for their retirement planning.",
-    date: "2023-07-20",
-    source: "Business Standard",
-    imageUrl: "https://images.unsplash.com/photo-1623210384123-871224afdce3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    url: "#"
-  },
-  {
-    id: 5,
-    title: "7 tax-saving instruments to consider for your retirement portfolio",
-    summary: "A comprehensive guide to tax-efficient investment options that can help you build a robust retirement corpus while minimizing your tax liability.",
-    date: "2023-07-15",
-    source: "Money Control",
-    imageUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    url: "#"
-  },
-  {
-    id: 6,
-    title: "How inflation impacts your retirement planning",
-    summary: "Understanding the effects of inflation on long-term retirement planning and strategies to inflation-proof your retirement savings.",
-    date: "2023-07-08",
-    source: "Financial Express",
-    imageUrl: "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    url: "#"
-  }
-];
+interface NewsItem {
+  id: string;
+  title: string;
+  summary: string;
+  date: string;
+  source: string;
+  imageUrl: string;
+  url: string;
+}
 
 const NewsList = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [news, setNews] = useState(dummyNews);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    // Simulate loading news data
+    const timer = setTimeout(() => {
+      setNews([
+        {
+          id: "1",
+          title: "RBI Maintains Repo Rate: What It Means for Your Retirement Savings",
+          summary: "The Reserve Bank of India has maintained the repo rate at 6.5%. Learn how this affects your fixed deposits, debt funds, and other retirement investments in the current economic climate.",
+          date: "2023-10-05",
+          source: "Financial Express",
+          imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+          url: "#"
+        },
+        {
+          id: "2",
+          title: "New Tax Benefits for National Pension System (NPS) Contributors",
+          summary: "The government has announced additional tax incentives for NPS contributors. Experts suggest this could make NPS a more attractive retirement savings option compared to PPF and EPF for certain taxpayers.",
+          date: "2023-09-28",
+          source: "Economic Times",
+          imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+          url: "#"
+        },
+        {
+          id: "3",
+          title: "SEBI Introduces New Mutual Fund Categories for Retirement Planning",
+          summary: "Securities and Exchange Board of India has introduced specialized retirement mutual fund categories with specific lock-in periods and tax advantages designed for long-term retirement planning.",
+          date: "2023-09-15",
+          source: "LiveMint",
+          imageUrl: "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+          url: "#"
+        },
+        {
+          id: "4",
+          title: "How Increasing Life Expectancy is Changing Retirement Planning in India",
+          summary: "With average life expectancy in India increasing to 70+ years, financial planners are advising a more robust corpus. This article explores strategies to ensure your savings last through extended retirement years.",
+          date: "2023-09-10",
+          source: "Forbes India",
+          imageUrl: "https://images.unsplash.com/photo-1556742031-c6961e8560b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+          url: "#"
+        },
+        {
+          id: "5",
+          title: "Digital Gold vs Physical Gold: Which is Better for Retirement Portfolio?",
+          summary: "As gold continues to be a favored asset for retirement portfolios in India, experts weigh in on the pros and cons of digital gold instruments compared to traditional physical gold investments.",
+          date: "2023-08-25",
+          source: "Business Standard",
+          imageUrl: "https://images.unsplash.com/photo-1610375461369-d613b564f4c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+          url: "#"
+        },
+        {
+          id: "6",
+          title: "Senior Citizen Savings Scheme Revised: Higher Interest Rates Announced",
+          summary: "The government has announced higher interest rates for the Senior Citizen Savings Scheme (SCSS), making it more attractive for retirees looking for secure fixed-income options.",
+          date: "2023-08-12",
+          source: "The Hindu",
+          imageUrl: "https://images.unsplash.com/photo-1573497161079-f3fd25cc6b90?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+          url: "#"
+        }
+      ]);
+      setLoading(false);
+    }, 1500);
     
-    if (searchTerm.trim() === "") {
-      setNews(dummyNews);
-      return;
-    }
-    
-    const filteredNews = dummyNews.filter(
-      item => 
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.summary.toLowerCase().includes(searchTerm.toLowerCase())
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Render loading skeletons
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array(6).fill(0).map((_, index) => (
+          <div key={index} className="space-y-3">
+            <Skeleton className="h-48 w-full rounded-lg" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-2/3" />
+            <div className="flex justify-between items-center pt-2">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+          </div>
+        ))}
+      </div>
     );
-    
-    setNews(filteredNews);
-  };
+  }
 
   return (
-    <div className="w-full space-y-6">
-      <form onSubmit={handleSearch} className="flex w-full max-w-lg mx-auto gap-2">
-        <Input
-          type="text"
-          placeholder="Search financial news..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="finance-input"
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {news.map((item) => (
+        <NewsCard
+          key={item.id}
+          title={item.title}
+          summary={item.summary}
+          date={item.date}
+          source={item.source}
+          imageUrl={item.imageUrl}
+          url={item.url}
         />
-        <Button type="submit">
-          <Search className="h-4 w-4 mr-2" />
-          Search
-        </Button>
-      </form>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {news.length > 0 ? (
-          news.map((item) => (
-            <NewsCard
-              key={item.id}
-              title={item.title}
-              summary={item.summary}
-              date={item.date}
-              source={item.source}
-              imageUrl={item.imageUrl}
-              url={item.url}
-            />
-          ))
-        ) : (
-          <div className="col-span-3 text-center py-12">
-            <p className="text-lg text-muted-foreground">No news articles found matching your search.</p>
-          </div>
-        )}
-      </div>
+      ))}
     </div>
   );
 };
