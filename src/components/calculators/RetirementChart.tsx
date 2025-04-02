@@ -15,7 +15,7 @@ const RetirementChart = ({ years, investmentData, growthData }: RetirementChartP
     growth: growthData[index],
   }));
 
-  const formatYAxisValue = (value: number) => {
+  const formatYAxisValue = (value: number): string => {
     if (value >= 10000000) {
       return `${(value / 10000000).toFixed(1)}Cr`;
     } else if (value >= 100000) {
@@ -23,7 +23,7 @@ const RetirementChart = ({ years, investmentData, growthData }: RetirementChartP
     } else if (value >= 1000) {
       return `${(value / 1000).toFixed(1)}K`;
     }
-    return value;
+    return value.toString();
   };
 
   const tooltipFormatter = (value: number) => {

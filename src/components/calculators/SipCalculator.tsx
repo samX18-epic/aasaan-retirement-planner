@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -40,7 +39,6 @@ const SipCalculator = () => {
     const monthlyRate = returnRate / 12 / 100;
     const months = duration * 12;
     
-    // Calculate maturity value using SIP formula
     const maturityValue = monthlyInvestment * 
                           ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * 
                           (1 + monthlyRate);
@@ -48,18 +46,14 @@ const SipCalculator = () => {
     const totalInvestment = monthlyInvestment * months;
     const estimatedReturns = maturityValue - totalInvestment;
 
-    // Generate yearly data for chart
     const yearlyData = [];
     let investedSoFar = 0;
     let currentValue = 0;
 
     for (let year = 1; year <= duration; year++) {
-      // Calculate investment and value at the end of each year
       const yearlyInvestment = monthlyInvestment * 12;
       investedSoFar += yearlyInvestment;
       
-      // For simplicity, we recalculate from scratch for each year
-      // A more precise calculation would track monthly compound growth
       const numOfMonths = year * 12;
       currentValue = monthlyInvestment * 
                     ((Math.pow(1 + monthlyRate, numOfMonths) - 1) / monthlyRate) * 
@@ -91,7 +85,7 @@ const SipCalculator = () => {
     }
   };
 
-  const formatYAxisValue = (value: number) => {
+  const formatYAxisValue = (value: number): string => {
     if (value >= 10000000) {
       return `${(value / 10000000).toFixed(1)}Cr`;
     } else if (value >= 100000) {
@@ -99,7 +93,7 @@ const SipCalculator = () => {
     } else if (value >= 1000) {
       return `${(value / 1000).toFixed(1)}K`;
     }
-    return value;
+    return value.toString();
   };
 
   return (

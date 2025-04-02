@@ -1,9 +1,9 @@
 import { ToastActionElement, ToastProps } from "@/components/ui/toast"
-import { createContext, useContext, useRef } from "react"
+import { createContext, useContext } from "react"
 import * as React from "react"
 
 const TOAST_LIMIT = 3
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 10000
 
 type ToasterToast = ToastProps & {
   id: string
