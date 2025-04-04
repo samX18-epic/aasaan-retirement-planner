@@ -9,7 +9,8 @@ import {
   Menu,
   X,
   TrendingUp,
-  Settings
+  Settings,
+  LineChart
 } from "lucide-react";
 
 const Navbar = () => {
@@ -39,6 +40,10 @@ const Navbar = () => {
             <Link to="/investments" className="flex items-center space-x-1 text-sm font-medium transition-colors hover:text-primary">
               <BarChart3 className="h-4 w-4" />
               <span>Investments</span>
+            </Link>
+            <Link to="/stock-market" className="flex items-center space-x-1 text-sm font-medium transition-colors hover:text-primary">
+              <LineChart className="h-4 w-4" />
+              <span>Stock Market</span>
             </Link>
             <Link to="/news" className="flex items-center space-x-1 text-sm font-medium transition-colors hover:text-primary">
               <Newspaper className="h-4 w-4" />
@@ -84,6 +89,14 @@ const Navbar = () => {
             >
               <BarChart3 className="h-5 w-5" />
               <span>Investments</span>
+            </Link>
+            <Link 
+              to="/stock-market" 
+              className="flex items-center space-x-2 py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <LineChart className="h-5 w-5" />
+              <span>Stock Market</span>
             </Link>
             <Link 
               to="/news" 
