@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import InvestmentRecommendations from "@/components/investments/InvestmentRecommendations";
 
 // Mock data for demonstration purposes
 const topMutualFunds = [
@@ -75,7 +75,7 @@ export default function StockMarket() {
       <div className="space-y-2">
         <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">Stock Market</h1>
         <p className="text-lg text-muted-foreground">
-          Explore mutual funds, SIP options, and market trends
+          Explore mutual funds, SIP options, and get personalized investment recommendations
         </p>
       </div>
 
@@ -93,10 +93,11 @@ export default function StockMarket() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full max-w-xl grid-cols-3">
+        <TabsList className="grid w-full max-w-xl grid-cols-4">
           <TabsTrigger value="explore">Explore</TabsTrigger>
           <TabsTrigger value="mutual-funds">Mutual Funds</TabsTrigger>
           <TabsTrigger value="sip">SIP Options</TabsTrigger>
+          <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="search">
@@ -300,6 +301,10 @@ export default function StockMarket() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="recommendations">
+          <InvestmentRecommendations />
         </TabsContent>
       </Tabs>
     </div>
