@@ -13,22 +13,22 @@ import { toast } from "@/hooks/use-toast";
 
 // Define the form schema
 const formSchema = z.object({
-  age: z.string().transform((val) => Number(val)).refine((val) => val >= 18 && val <= 80, {
+  age: z.coerce.number().min(18).max(80, {
     message: "Age must be between 18 and 80",
   }),
-  annualIncome: z.string().transform((val) => Number(val)).refine((val) => val >= 0, {
+  annualIncome: z.coerce.number().min(0, {
     message: "Annual income must be a positive number",
   }),
-  workingYearsLeft: z.string().transform((val) => Number(val)).refine((val) => val >= 0 && val <= 60, {
+  workingYearsLeft: z.coerce.number().min(0).max(60, {
     message: "Working years left must be between 0 and 60",
   }),
-  expenses: z.string().transform((val) => Number(val)).refine((val) => val >= 0, {
+  expenses: z.coerce.number().min(0, {
     message: "Expenses must be a positive number",
   }),
-  savings: z.string().transform((val) => Number(val)).refine((val) => val >= 0, {
+  savings: z.coerce.number().min(0, {
     message: "Savings must be a positive number",
   }),
-  liabilities: z.string().transform((val) => Number(val)).refine((val) => val >= 0, {
+  liabilities: z.coerce.number().min(0, {
     message: "Liabilities must be a positive number",
   }),
 });
@@ -57,12 +57,12 @@ export default function HlvCalculator() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      age: "35",
-      annualIncome: "500000",
-      workingYearsLeft: "25",
-      expenses: "300000",
-      savings: "100000",
-      liabilities: "200000",
+      age: 35,
+      annualIncome: 500000,
+      workingYearsLeft: 25,
+      expenses: 300000,
+      savings: 100000,
+      liabilities: 200000,
     },
   });
 
