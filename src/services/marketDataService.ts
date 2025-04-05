@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast";
 
 // Types for market data
@@ -83,9 +84,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 112.34,
       aum: 23456,
       expenseRatio: 1.7,
-      riskLevel: "High",
+      riskLevel: "High" as const,
       rating: 5,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "5",
@@ -97,9 +98,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 156.78,
       aum: 10234,
       expenseRatio: 2.0,
-      riskLevel: "High",
+      riskLevel: "High" as const,
       rating: 4,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "6",
@@ -111,9 +112,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 187.92,
       aum: 21345,
       expenseRatio: 1.6,
-      riskLevel: "Moderate",
+      riskLevel: "Moderate" as const,
       rating: 4,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "7",
@@ -125,9 +126,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 43.21,
       aum: 9876,
       expenseRatio: 1.9,
-      riskLevel: "High",
+      riskLevel: "High" as const,
       rating: 4,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "8",
@@ -139,9 +140,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 56.43,
       aum: 14567,
       expenseRatio: 1.5,
-      riskLevel: "Moderate",
+      riskLevel: "Moderate" as const,
       rating: 5,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "9",
@@ -153,9 +154,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 26.54,
       aum: 28764,
       expenseRatio: 0.9,
-      riskLevel: "Low",
+      riskLevel: "Low" as const,
       rating: 4,
-      trending: "neutral"
+      trending: "neutral" as const
     },
     {
       id: "10",
@@ -167,9 +168,66 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 16.75,
       aum: 5678,
       expenseRatio: 0.5,
-      riskLevel: "Moderate",
+      riskLevel: "Moderate" as const,
       rating: 4,
-      trending: "neutral"
+      trending: "neutral" as const
+    },
+    // Add more India-specific mutual fund options
+    {
+      id: "11",
+      name: "UTI Nifty Next 50 Index Fund",
+      category: "Index",
+      oneYearReturn: 14.2,
+      threeYearReturn: 13.1,
+      fiveYearReturn: 11.5,
+      nav: 18.65,
+      aum: 4329,
+      expenseRatio: 0.4,
+      riskLevel: "Moderate" as const,
+      rating: 4,
+      trending: "up" as const
+    },
+    {
+      id: "12",
+      name: "ICICI Prudential Bluechip Fund",
+      category: "Large Cap",
+      oneYearReturn: 14.8,
+      threeYearReturn: 11.9,
+      fiveYearReturn: 10.7,
+      nav: 72.45,
+      aum: 36721,
+      expenseRatio: 1.3,
+      riskLevel: "Moderate" as const,
+      rating: 5,
+      trending: "up" as const
+    },
+    {
+      id: "13",
+      name: "Franklin India Smaller Companies Fund",
+      category: "Small Cap",
+      oneYearReturn: 21.7,
+      threeYearReturn: 18.4,
+      fiveYearReturn: 15.3,
+      nav: 88.24,
+      aum: 8563,
+      expenseRatio: 2.1,
+      riskLevel: "High" as const,
+      rating: 4,
+      trending: "up" as const
+    },
+    {
+      id: "14",
+      name: "Canara Robeco Bluechip Equity Fund",
+      category: "Large Cap",
+      oneYearReturn: 15.6,
+      threeYearReturn: 12.8,
+      fiveYearReturn: 11.2,
+      nav: 42.36,
+      aum: 12765,
+      expenseRatio: 1.4,
+      riskLevel: "Moderate" as const,
+      rating: 4,
+      trending: "up" as const
     }
   ];
   
@@ -219,6 +277,25 @@ export const fetchMarketIndices = async (): Promise<StockIndex[]> => {
       value: 15876.43,
       change: 178.34,
       percentChange: 1.13
+    },
+    // Add more Indian indices
+    {
+      name: "NIFTY AUTO",
+      value: 19875.23,
+      change: 167.34,
+      percentChange: 0.85
+    },
+    {
+      name: "NIFTY IT",
+      value: 36542.65,
+      change: -243.56,
+      percentChange: -0.66
+    },
+    {
+      name: "NIFTY PHARMA",
+      value: 16429.78,
+      change: 112.45,
+      percentChange: 0.69
     }
   ];
   
@@ -275,6 +352,129 @@ export const fetchMarketNews = async (): Promise<{title: string; summary: string
       title: "IT sector leads gains amid global tech rally",
       summary: "Indian IT stocks follow global peers higher on AI optimism.",
       date: new Date().toISOString().split('T')[0]
+    },
+    {
+      title: "New pension reforms announced by government",
+      summary: "Changes to NPS to offer more flexibility and higher returns for subscribers.",
+      date: new Date().toISOString().split('T')[0]
+    },
+    {
+      title: "Retirement planning gains focus among millennials",
+      summary: "Financial advisors report surge in retirement planning queries from 25-35 age group.",
+      date: new Date().toISOString().split('T')[0]
+    }
+  ];
+};
+
+// Add function to fetch retirement calculator recommendations
+export const fetchRetirementCalculators = async (): Promise<{name: string; provider: string; features: string[]; url: string}[]> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  return [
+    {
+      name: "NPS Retirement Calculator",
+      provider: "NSDL",
+      features: [
+        "Government-approved pension scheme calculator",
+        "Tax benefits projection",
+        "Tier I and Tier II account simulations"
+      ],
+      url: "https://npscra.nsdl.co.in"
+    },
+    {
+      name: "HDFC Retirement Calculator",
+      provider: "HDFC Life",
+      features: [
+        "Simple, intuitive inputs for corpus planning",
+        "Life expectancy based calculations",
+        "Inflation-adjusted projections"
+      ],
+      url: "https://www.hdfclife.com/retirement-plans/retirement-calculator"
+    },
+    {
+      name: "ET Money Retirement Planner",
+      provider: "ET Money",
+      features: [
+        "Considers lifestyle and inflation factors",
+        "Personalized retirement age recommendations",
+        "Real-time mutual fund integration"
+      ],
+      url: "https://www.etmoney.com/tools-and-calculators/retirement-planner"
+    },
+    {
+      name: "ClearTax Retirement Calculator",
+      provider: "ClearTax",
+      features: [
+        "Includes tax impact projections",
+        "Post-retirement income planning",
+        "Multiple investment scenarios"
+      ],
+      url: "https://cleartax.in/s/retirement-planning-calculator"
+    }
+  ];
+};
+
+// Add function to fetch fintech retirement tools
+export const fetchFintechRetirementTools = async (): Promise<{name: string; category: string; description: string; features: string[]}[]> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  return [
+    {
+      name: "Zerodha Coin",
+      category: "Robo-Advisor",
+      description: "Zero-commission direct mutual fund platform with retirement planning tools",
+      features: [
+        "AI-based investment strategies",
+        "Retirement corpus forecasting",
+        "Zero commission direct mutual funds",
+        "Automated SIP management"
+      ]
+    },
+    {
+      name: "Scripbox",
+      category: "Digital Wealth Manager",
+      description: "Scientific investment approach to long-term wealth creation",
+      features: [
+        "Personalized retirement planning",
+        "Portfolio rebalancing",
+        "Tax-optimized investment strategies",
+        "Goal-based retirement planning"
+      ]
+    },
+    {
+      name: "Kuvera",
+      category: "Robo-Advisor",
+      description: "Free direct mutual fund platform with advanced retirement planning",
+      features: [
+        "Goal-based investing",
+        "Smart portfolio suggestions",
+        "Retirement goal tracking",
+        "Real-time portfolio analytics"
+      ]
+    },
+    {
+      name: "ETMONEY SmartDeposit",
+      category: "Smart Investment",
+      description: "Liquid fund investment with returns better than savings account",
+      features: [
+        "Automated investment management",
+        "Instant withdrawal facility",
+        "Better returns than FD",
+        "Ideal for retirement emergency corpus"
+      ]
+    },
+    {
+      name: "Paytm Money",
+      category: "Digital Investment Platform",
+      description: "One-stop platform for mutual funds, stocks and NPS",
+      features: [
+        "NPS account management",
+        "Direct mutual fund investments",
+        "Retirement corpus simulation",
+        "Paperless investment process"
+      ]
     }
   ];
 };
@@ -299,6 +499,8 @@ export const useMarketData = () => {
   return {
     getMutualFunds: () => fetchData(() => fetchMutualFunds(), "Failed to fetch mutual funds data"),
     getMarketIndices: () => fetchData(() => fetchMarketIndices(), "Failed to fetch market indices data"),
-    getMarketNews: () => fetchData(() => fetchMarketNews(), "Failed to fetch market news")
+    getMarketNews: () => fetchData(() => fetchMarketNews(), "Failed to fetch market news"),
+    getRetirementCalculators: () => fetchData(() => fetchRetirementCalculators(), "Failed to fetch retirement calculators"),
+    getFintechRetirementTools: () => fetchData(() => fetchFintechRetirementTools(), "Failed to fetch fintech retirement tools")
   };
 };

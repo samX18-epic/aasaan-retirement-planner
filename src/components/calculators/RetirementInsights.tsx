@@ -2,7 +2,17 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Lightbulb, TrendingUp, Coins, PiggyBank, BarChart3 } from "lucide-react";
+import { 
+  ArrowRight, 
+  Lightbulb, 
+  TrendingUp, 
+  Coins, 
+  PiggyBank, 
+  BarChart3,
+  ExternalLink,
+  Laptop,
+  Smartphone
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,6 +59,24 @@ const RetirementInsights = ({
     queryKey: ['mutualFunds'],
     queryFn: marketDataService.getMutualFunds
   });
+  
+  // Fetch retirement calculators
+  const {
+    data: retirementCalculators,
+    isLoading: isLoadingCalculators
+  } = useQuery({
+    queryKey: ['retirementCalculators'],
+    queryFn: marketDataService.getRetirementCalculators
+  });
+  
+  // Fetch fintech retirement tools
+  const {
+    data: fintechTools,
+    isLoading: isLoadingFintechTools
+  } = useQuery({
+    queryKey: ['fintechTools'],
+    queryFn: marketDataService.getFintechRetirementTools
+  });
 
   // Calculate risk profile based on age and years until retirement
   const calculateRiskProfile = () => {
@@ -76,39 +104,47 @@ const RetirementInsights = ({
         newInsights.push("Your early start gives you a significant advantage. Consider allocating more to equity for long-term growth.");
         newInsights.push("With time on your side, you could explore high-growth small-cap funds for a portion of your portfolio.");
         newInsights.push("Consider a 70-30 equity-debt ratio to maximize long-term wealth accumulation while managing volatility.");
+        newInsights.push("Look into ELSS funds for tax advantages under Section 80C while building retirement corpus.");
       } else if (age < 45) {
         newInsights.push("You're in your prime earning years. Consider maximizing tax-advantaged retirement accounts like PPF and NPS.");
         newInsights.push("Balance between growth and stability with a 60-40 equity-debt ratio to optimize returns.");
         newInsights.push("Review and update your health insurance coverage as healthcare costs may increase significantly by retirement.");
+        newInsights.push("Consider HDFC Retirement Fund or similar target-date funds that automatically adjust risk as you approach retirement.");
       } else {
         newInsights.push("As you approach retirement, consider gradually shifting towards more conservative investments.");
         newInsights.push("Review and maximize employer retirement benefits if available.");
         newInsights.push("Consider a 40-60 equity-debt ratio to protect accumulated wealth while allowing for modest growth.");
+        newInsights.push("Look into Senior Citizens Savings Scheme (SCSS) and PM Vaya Vandana Yojana for guaranteed income.");
       }
       
       // Corpus and investment insights
       if (monthlyInvestment < requiredCorpus / (12 * yearsUntilRetirement * 10)) {
         newInsights.push("Your current investment rate may be insufficient. Consider increasing your monthly contribution by at least 20%.");
         newInsights.push("Explore additional income streams to boost retirement savings without compromising lifestyle.");
+        newInsights.push("Use the ET Money Retirement Planner to simulate different investment amounts and their impact.");
       }
       
       if (expectedReturns > 14) {
         newInsights.push("Your expected return rate seems optimistic. Consider planning with a more conservative rate of 10-12%.");
         newInsights.push("Create a 'stress test' scenario with lower returns to ensure your plan remains viable in varied market conditions.");
+        newInsights.push("The ClearTax Retirement Calculator can help model different return scenarios with tax implications.");
       }
       
       // Additional personalized insights
       if (yearsUntilRetirement > 20) {
         newInsights.push("With a long investment horizon, consider allocating a portion to international equity for greater diversification.");
+        newInsights.push("Platforms like Kuvera and Scripbox can help create and maintain globally diversified portfolios.");
       }
       
       if (requiredCorpus > 5000000) {
         newInsights.push("Your significant corpus goal may benefit from professional financial planning. Consider consulting a certified advisor.");
+        newInsights.push("NPS can be a good addition to your retirement strategy for tax benefits and disciplined investing.");
       }
       
       // Additional general insights
       newInsights.push("Diversify across asset classes for better risk management. Consider gold and international exposure.");
       newInsights.push("Review your retirement portfolio quarterly and rebalance annually to maintain optimal asset allocation.");
+      newInsights.push("Use robo-advisors like Zerodha Coin or Paytm Money for automated retirement portfolio management.");
       
       setInsights(newInsights);
       generateFundRecommendations();
@@ -217,9 +253,11 @@ const RetirementInsights = ({
       <CardContent className="space-y-4">
         {insights.length > 0 ? (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="insights">Personalized Insights</TabsTrigger>
               <TabsTrigger value="recommendations">Fund Recommendations</TabsTrigger>
+              <TabsTrigger value="calculators">Popular Calculators</TabsTrigger>
+              <TabsTrigger value="fintech">FinTech Tools</TabsTrigger>
             </TabsList>
             
             <TabsContent value="insights" className="mt-4 space-y-4">
@@ -307,6 +345,99 @@ const RetirementInsights = ({
                       </div>
                     </div>
                   ))}
+                </>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="calculators" className="mt-4 space-y-4">
+              {isLoadingCalculators ? (
+                <div className="py-8 text-center">
+                  <Laptop className="h-12 w-12 mx-auto mb-4 text-muted-foreground animate-pulse" />
+                  <p>Loading popular retirement calculators...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-muted/50 p-4 rounded-lg mb-4">
+                    <h3 className="font-medium mb-2">India-Specific Retirement Calculators</h3>
+                    <p className="text-sm text-muted-foreground">
+                      These calculators help you estimate how much you need to save regularly for retirement based on Indian market conditions.
+                    </p>
+                  </div>
+                  
+                  {retirementCalculators?.map((calc, index) => (
+                    <div key={index} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <h4 className="font-medium">{calc.name}</h4>
+                          <p className="text-sm text-muted-foreground">{calc.provider}</p>
+                        </div>
+                        <a 
+                          href={calc.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                        >
+                          <span className="text-sm">Visit</span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                      <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 pl-1">
+                        {calc.features.map((feature, idx) => (
+                          <li key={idx}>{feature}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="fintech" className="mt-4 space-y-4">
+              {isLoadingFintechTools ? (
+                <div className="py-8 text-center">
+                  <Smartphone className="h-12 w-12 mx-auto mb-4 text-muted-foreground animate-pulse" />
+                  <p>Loading fintech retirement tools...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-muted/50 p-4 rounded-lg mb-4">
+                    <h3 className="font-medium mb-2">FinTech & Retirement</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Modern fintech platforms are revolutionizing retirement planning with AI-powered tools and robo-advisors.
+                    </p>
+                  </div>
+                  
+                  {fintechTools?.map((tool, index) => (
+                    <div key={index} className="border rounded-lg p-4">
+                      <div className="mb-2">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="font-medium">{tool.name}</h4>
+                          <Badge variant="outline">{tool.category}</Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{tool.description}</p>
+                      </div>
+                      <ul className="grid grid-cols-2 gap-2 mt-3">
+                        {tool.features.map((feature, idx) => (
+                          <li key={idx} className="text-xs flex items-start gap-1">
+                            <TrendingUp className="h-3 w-3 mt-0.5 text-blue-500 flex-shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                  
+                  <div className="border border-dashed p-4 rounded-lg mt-6">
+                    <h4 className="font-medium mb-2">Emerging Technologies</h4>
+                    <div className="space-y-2 text-sm">
+                      <p>
+                        <span className="font-medium">Blockchain & Digital Assets:</span> While still niche in India, blockchain-based pensions and retirement accounts are on the horizon.
+                      </p>
+                      <p>
+                        <span className="font-medium">Smart Retirement Calculators:</span> New tools factor in inflation, lifestyle choices, and health expenses with dynamic inputs.
+                      </p>
+                    </div>
+                  </div>
                 </>
               )}
             </TabsContent>

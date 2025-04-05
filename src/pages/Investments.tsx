@@ -4,6 +4,7 @@ import SipCalculator from "@/components/calculators/SipCalculator";
 import HlvCalculator from "@/components/calculators/HlvCalculator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 export default function Investments() {
   return (
@@ -17,17 +18,28 @@ export default function Investments() {
 
       <Tabs defaultValue="retirement">
         <TabsList className="grid w-full max-w-xl grid-cols-3">
-          <TabsTrigger value="retirement">Retirement</TabsTrigger>
+          <TabsTrigger value="retirement" className="relative">
+            Retirement
+            <Badge className="absolute -top-2 -right-2 text-xs h-5 bg-amber-500 hover:bg-amber-600">AI</Badge>
+          </TabsTrigger>
           <TabsTrigger value="sip">SIP</TabsTrigger>
           <TabsTrigger value="hlv">HLV</TabsTrigger>
         </TabsList>
         <TabsContent value="retirement">
           <Card>
             <CardHeader>
-              <CardTitle>Retirement Planning</CardTitle>
-              <CardDescription>
-                Calculate how much you need to save for a comfortable retirement.
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Retirement Planning</CardTitle>
+                  <CardDescription>
+                    Calculate how much you need to save for a comfortable retirement.
+                  </CardDescription>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <Badge variant="outline" className="text-xs">India-Specific</Badge>
+                  <span className="text-xs text-muted-foreground">AI-powered insights</span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <RetirementCalculator />
