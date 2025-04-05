@@ -1,4 +1,3 @@
-
 import { useToast } from "@/hooks/use-toast";
 
 // Types for market data
@@ -25,13 +24,13 @@ export interface StockIndex {
 }
 
 // This would connect to real APIs in production
-// For demonstration, using realistic mock data
+// For demonstration, using realistic mock data with simulated real-time fluctuations
 export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1200));
   
-  // In production, this would be a real API call
-  return [
+  // Base mutual fund data
+  const baseFunds = [
     {
       id: "1",
       name: "SBI Blue Chip Fund",
@@ -42,9 +41,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 64.82,
       aum: 32456,
       expenseRatio: 1.2,
-      riskLevel: "Moderate",
+      riskLevel: "Moderate" as const,
       rating: 5,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "2",
@@ -56,9 +55,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 298.75,
       aum: 45678,
       expenseRatio: 1.6,
-      riskLevel: "Moderate",
+      riskLevel: "Moderate" as const,
       rating: 5,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "3",
@@ -70,9 +69,9 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       nav: 87.56,
       aum: 12567,
       expenseRatio: 1.8,
-      riskLevel: "High",
+      riskLevel: "High" as const,
       rating: 4,
-      trending: "up"
+      trending: "up" as const
     },
     {
       id: "4",
@@ -173,14 +172,24 @@ export const fetchMutualFunds = async (): Promise<MutualFund[]> => {
       trending: "neutral"
     }
   ];
+  
+  // Simulate real-time data by adding small random fluctuations
+  return baseFunds.map(fund => ({
+    ...fund,
+    oneYearReturn: addRandomFluctuation(fund.oneYearReturn, 0.2),
+    threeYearReturn: addRandomFluctuation(fund.threeYearReturn, 0.1),
+    fiveYearReturn: addRandomFluctuation(fund.fiveYearReturn, 0.05),
+    nav: addRandomFluctuation(fund.nav, 0.05),
+    trending: getRandomTrending(fund.trending)
+  }));
 };
 
 export const fetchMarketIndices = async (): Promise<StockIndex[]> => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 800));
   
-  // In production, this would be a real API call
-  return [
+  // Base index data
+  const baseIndices = [
     {
       name: "NIFTY 50",
       value: 23487.65,
@@ -212,6 +221,62 @@ export const fetchMarketIndices = async (): Promise<StockIndex[]> => {
       percentChange: 1.13
     }
   ];
+  
+  // Simulate real-time data by adding small random fluctuations
+  return baseIndices.map(index => {
+    const newPercentChange = addRandomFluctuation(index.percentChange, 0.1);
+    const newChange = (newPercentChange * index.value) / 100;
+    
+    return {
+      ...index,
+      change: parseFloat(newChange.toFixed(2)),
+      percentChange: parseFloat(newPercentChange.toFixed(2))
+    };
+  });
+};
+
+// Helper function to add small random fluctuations to simulate real-time changes
+const addRandomFluctuation = (value: number, maxFluctuation: number): number => {
+  // Generate random number between -maxFluctuation and +maxFluctuation
+  const fluctuation = (Math.random() * maxFluctuation * 2) - maxFluctuation;
+  return parseFloat((value + fluctuation).toFixed(2));
+};
+
+// Helper to randomly update trending status
+const getRandomTrending = (currentTrend: "up" | "down" | "neutral"): "up" | "down" | "neutral" => {
+  const random = Math.random();
+  
+  // 70% chance to keep current trend, 30% to change
+  if (random < 0.7) return currentTrend;
+  
+  // If changing, determine new trend
+  if (random < 0.85) return "up";
+  if (random < 0.95) return "down";
+  return "neutral";
+};
+
+// Add function to fetch real-time market news (simulation)
+export const fetchMarketNews = async (): Promise<{title: string; summary: string; date: string}[]> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  return [
+    {
+      title: "Markets reach new highs as FII inflows increase",
+      summary: "Foreign Institutional Investors have pumped in over ₹15,000 crores in the last week.",
+      date: new Date().toISOString().split('T')[0]
+    },
+    {
+      title: "RBI keeps repo rate unchanged at 6.5%",
+      summary: "The central bank maintains its stance citing inflation concerns.",
+      date: new Date().toISOString().split('T')[0]
+    },
+    {
+      title: "IT sector leads gains amid global tech rally",
+      summary: "Indian IT stocks follow global peers higher on AI optimism.",
+      date: new Date().toISOString().split('T')[0]
+    }
+  ];
 };
 
 export const useMarketData = () => {
@@ -234,5 +299,6 @@ export const useMarketData = () => {
   return {
     getMutualFunds: () => fetchData(() => fetchMutualFunds(), "Failed to fetch mutual funds data"),
     getMarketIndices: () => fetchData(() => fetchMarketIndices(), "Failed to fetch market indices data"),
+    getMarketNews: () => fetchData(() => fetchMarketNews(), "Failed to fetch market news")
   };
 };
