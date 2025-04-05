@@ -20,7 +20,10 @@ export default function Investments() {
         <TabsList className="grid w-full max-w-xl grid-cols-3">
           <TabsTrigger value="retirement" className="relative">
             Retirement
-            <Badge className="absolute -top-2 -right-2 text-xs h-5 bg-amber-500 hover:bg-amber-600">AI</Badge>
+            <div className="absolute -top-3 -right-1">
+              <Badge className="text-xs h-5 bg-amber-500 hover:bg-amber-600">AI</Badge>
+              <Badge className="text-xs h-5 ml-1 bg-blue-500 hover:bg-blue-600">New</Badge>
+            </div>
           </TabsTrigger>
           <TabsTrigger value="sip">SIP</TabsTrigger>
           <TabsTrigger value="hlv">HLV</TabsTrigger>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,10 @@ import {
   BarChart3,
   ExternalLink,
   Laptop,
-  Smartphone
+  Smartphone,
+  Bitcoin,
+  Lock,
+  Wallet
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
@@ -51,7 +53,6 @@ const RetirementInsights = ({
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const marketDataService = useMarketData();
   
-  // Fetch mutual funds using React Query for recommendations
   const { 
     data: mutualFunds,
     isLoading: isLoadingFunds
@@ -60,7 +61,6 @@ const RetirementInsights = ({
     queryFn: marketDataService.getMutualFunds
   });
   
-  // Fetch retirement calculators
   const {
     data: retirementCalculators,
     isLoading: isLoadingCalculators
@@ -69,7 +69,6 @@ const RetirementInsights = ({
     queryFn: marketDataService.getRetirementCalculators
   });
   
-  // Fetch fintech retirement tools
   const {
     data: fintechTools,
     isLoading: isLoadingFintechTools
@@ -78,7 +77,6 @@ const RetirementInsights = ({
     queryFn: marketDataService.getFintechRetirementTools
   });
 
-  // Calculate risk profile based on age and years until retirement
   const calculateRiskProfile = () => {
     if (age < 30 && yearsUntilRetirement > 25) return "Aggressive";
     if (age < 40 && yearsUntilRetirement > 15) return "Moderately Aggressive";
@@ -89,17 +87,12 @@ const RetirementInsights = ({
 
   const riskProfile = calculateRiskProfile();
 
-  // Generate AI insights based on user's retirement parameters
   const generateInsights = () => {
     setLoading(true);
-    
-    // In a real implementation, this would call an AI API
-    // For now, we'll use predefined insights based on parameters
     
     setTimeout(() => {
       const newInsights = [];
       
-      // Age-based insights
       if (age < 30) {
         newInsights.push("Your early start gives you a significant advantage. Consider allocating more to equity for long-term growth.");
         newInsights.push("With time on your side, you could explore high-growth small-cap funds for a portion of your portfolio.");
@@ -117,7 +110,6 @@ const RetirementInsights = ({
         newInsights.push("Look into Senior Citizens Savings Scheme (SCSS) and PM Vaya Vandana Yojana for guaranteed income.");
       }
       
-      // Corpus and investment insights
       if (monthlyInvestment < requiredCorpus / (12 * yearsUntilRetirement * 10)) {
         newInsights.push("Your current investment rate may be insufficient. Consider increasing your monthly contribution by at least 20%.");
         newInsights.push("Explore additional income streams to boost retirement savings without compromising lifestyle.");
@@ -130,7 +122,6 @@ const RetirementInsights = ({
         newInsights.push("The ClearTax Retirement Calculator can help model different return scenarios with tax implications.");
       }
       
-      // Additional personalized insights
       if (yearsUntilRetirement > 20) {
         newInsights.push("With a long investment horizon, consider allocating a portion to international equity for greater diversification.");
         newInsights.push("Platforms like Kuvera and Scripbox can help create and maintain globally diversified portfolios.");
@@ -141,7 +132,6 @@ const RetirementInsights = ({
         newInsights.push("NPS can be a good addition to your retirement strategy for tax benefits and disciplined investing.");
       }
       
-      // Additional general insights
       newInsights.push("Diversify across asset classes for better risk management. Consider gold and international exposure.");
       newInsights.push("Review your retirement portfolio quarterly and rebalance annually to maintain optimal asset allocation.");
       newInsights.push("Use robo-advisors like Zerodha Coin or Paytm Money for automated retirement portfolio management.");
@@ -157,14 +147,11 @@ const RetirementInsights = ({
     }, 1500);
   };
 
-  // Generate fund recommendations based on risk profile and mutual fund data
   const generateFundRecommendations = () => {
     if (!mutualFunds) return;
 
-    // Filter and sort mutual funds based on risk profile
     let filteredFunds: MutualFund[] = [...mutualFunds];
     
-    // Apply risk-based filtering
     if (riskProfile === "Aggressive") {
       filteredFunds = filteredFunds.filter(fund => 
         fund.riskLevel === "High" || 
@@ -191,13 +178,10 @@ const RetirementInsights = ({
       );
     }
     
-    // Sort by performance
     filteredFunds.sort((a, b) => b.threeYearReturn - a.threeYearReturn);
     
-    // Take top performers
     const topFunds = filteredFunds.slice(0, 4);
     
-    // Create allocation percentages based on risk profile
     let allocations: number[] = [];
     
     if (riskProfile === "Aggressive") {
@@ -212,7 +196,6 @@ const RetirementInsights = ({
       allocations = [25, 25, 25, 25];
     }
     
-    // Create recommendations
     const newRecommendations: Recommendation[] = topFunds.map((fund, index) => ({
       fundId: fund.id,
       fundName: fund.name,
@@ -223,8 +206,7 @@ const RetirementInsights = ({
     
     setRecommendations(newRecommendations);
   };
-  
-  // Generate reason for recommendation
+
   const getReason = (fund: MutualFund, index: number) => {
     const reasons = [
       `Top performer in ${fund.category} category with consistent returns over 3-5 years.`,
@@ -253,11 +235,12 @@ const RetirementInsights = ({
       <CardContent className="space-y-4">
         {insights.length > 0 ? (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="insights">Personalized Insights</TabsTrigger>
-              <TabsTrigger value="recommendations">Fund Recommendations</TabsTrigger>
-              <TabsTrigger value="calculators">Popular Calculators</TabsTrigger>
-              <TabsTrigger value="fintech">FinTech Tools</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="insights">Insights</TabsTrigger>
+              <TabsTrigger value="recommendations">Funds</TabsTrigger>
+              <TabsTrigger value="calculators">Calculators</TabsTrigger>
+              <TabsTrigger value="fintech">FinTech</TabsTrigger>
+              <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
             </TabsList>
             
             <TabsContent value="insights" className="mt-4 space-y-4">
@@ -393,53 +376,241 @@ const RetirementInsights = ({
             </TabsContent>
             
             <TabsContent value="fintech" className="mt-4 space-y-4">
-              {isLoadingFintechTools ? (
-                <div className="py-8 text-center">
-                  <Smartphone className="h-12 w-12 mx-auto mb-4 text-muted-foreground animate-pulse" />
-                  <p>Loading fintech retirement tools...</p>
-                </div>
-              ) : (
-                <>
-                  <div className="bg-muted/50 p-4 rounded-lg mb-4">
-                    <h3 className="font-medium mb-2">FinTech & Retirement</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Modern fintech platforms are revolutionizing retirement planning with AI-powered tools and robo-advisors.
+              <div className="bg-muted/50 p-4 rounded-lg mb-4">
+                <h3 className="font-medium mb-2">FinTech & Retirement Planning</h3>
+                <p className="text-sm text-muted-foreground">
+                  Modern fintech platforms are revolutionizing retirement planning with AI-powered tools and robo-advisors.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <Card className="border-l-4 border-l-blue-500">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Robo-Advisors</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-500" />
+                          <h4 className="font-medium text-sm">Zerodha's Coin</h4>
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-6">
+                          India's largest discount broker platform with low-cost mutual fund investment options
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <PiggyBank className="h-4 w-4 text-green-500" />
+                          <h4 className="font-medium text-sm">Scripbox</h4>
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-6">
+                          AI-driven goal-based investing with automatic portfolio rebalancing for retirement
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Coins className="h-4 w-4 text-amber-500" />
+                          <h4 className="font-medium text-sm">Kuvera</h4>
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-6">
+                          Zero commission platform with advanced portfolio analysis and retirement forecasting
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-l-4 border-l-amber-500">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Smart Retirement Calculators</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-4">
+                      <p className="text-sm">
+                        Modern tools that factor in multiple variables for accurate retirement planning:
+                      </p>
+                      
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <BarChart3 className="h-4 w-4 text-blue-500 mt-0.5" />
+                          <span>Dynamic inflation adjustment based on lifestyle choices</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Wallet className="h-4 w-4 text-green-500 mt-0.5" />
+                          <span>Healthcare expense projections specific to age and location</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <TrendingUp className="h-4 w-4 text-purple-500 mt-0.5" />
+                          <span>Tax optimization strategies integrated into retirement planning</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="border border-dashed p-4 rounded-lg">
+                <h4 className="font-medium mb-3">How Robo-Advisors Optimize Your Retirement</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <div className="font-medium mb-1 flex items-center gap-1">
+                      <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
+                      Portfolio Rebalancing
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Automatic adjustment of asset allocation as you approach retirement age
                     </p>
                   </div>
                   
-                  {fintechTools?.map((tool, index) => (
-                    <div key={index} className="border rounded-lg p-4">
-                      <div className="mb-2">
-                        <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-medium">{tool.name}</h4>
-                          <Badge variant="outline">{tool.category}</Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{tool.description}</p>
-                      </div>
-                      <ul className="grid grid-cols-2 gap-2 mt-3">
-                        {tool.features.map((feature, idx) => (
-                          <li key={idx} className="text-xs flex items-start gap-1">
-                            <TrendingUp className="h-3 w-3 mt-0.5 text-blue-500 flex-shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <div className="font-medium mb-1 flex items-center gap-1">
+                      <BarChart3 className="h-3.5 w-3.5 text-green-500" />
+                      Tax-Loss Harvesting
                     </div>
-                  ))}
+                    <p className="text-xs text-muted-foreground">
+                      Optimizes your portfolio for tax efficiency, increasing overall returns
+                    </p>
+                  </div>
                   
-                  <div className="border border-dashed p-4 rounded-lg mt-6">
-                    <h4 className="font-medium mb-2">Emerging Technologies</h4>
-                    <div className="space-y-2 text-sm">
-                      <p>
-                        <span className="font-medium">Blockchain & Digital Assets:</span> While still niche in India, blockchain-based pensions and retirement accounts are on the horizon.
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <div className="font-medium mb-1 flex items-center gap-1">
+                      <PiggyBank className="h-3.5 w-3.5 text-amber-500" />
+                      Goal Tracking
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Real-time monitoring of progress toward retirement corpus goals
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="blockchain" className="mt-4 space-y-4">
+              <div className="bg-muted/50 p-4 rounded-lg mb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium mb-1">Blockchain & Digital Assets in Retirement</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Emerging technologies reshaping retirement planning in India
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="bg-amber-100">Emerging</Badge>
+                </div>
+              </div>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Bitcoin className="h-4 w-4 text-amber-500" />
+                    Blockchain-Based Pension Systems
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p className="text-sm">
+                      While still in early stages in India, blockchain technology offers several advantages for retirement planning:
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="border rounded-lg p-3">
+                        <div className="font-medium mb-1 flex items-center gap-1">
+                          <Lock className="h-3.5 w-3.5 text-blue-500" />
+                          Enhanced Security
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Immutable records protect retirement savings from fraud and unauthorized access
+                        </p>
+                      </div>
+                      
+                      <div className="border rounded-lg p-3">
+                        <div className="font-medium mb-1 flex items-center gap-1">
+                          <TrendingUp className="h-3.5 w-3.5 text-green-500" />
+                          Transparent Tracking
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Real-time visibility into pension fund performance and management
+                        </p>
+                      </div>
+                      
+                      <div className="border rounded-lg p-3">
+                        <div className="font-medium mb-1 flex items-center gap-1">
+                          <Coins className="h-3.5 w-3.5 text-amber-500" />
+                          Lower Costs
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Reduced administrative expenses through smart contract automation
+                        </p>
+                      </div>
+                      
+                      <div className="border rounded-lg p-3">
+                        <div className="font-medium mb-1 flex items-center gap-1">
+                          <Wallet className="h-3.5 w-3.5 text-purple-500" />
+                          Portable Benefits
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Easier transfer of retirement benefits when changing employers
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 mt-2">
+                      <h4 className="font-medium text-sm mb-2">Indian Regulatory Landscape</h4>
+                      <p className="text-xs text-muted-foreground">
+                        While blockchain pension systems are not yet mainstream in India, regulatory frameworks are evolving. The Pension Fund Regulatory and Development Authority (PFRDA) has shown interest in exploring blockchain solutions for the National Pension System (NPS).
                       </p>
-                      <p>
-                        <span className="font-medium">Smart Retirement Calculators:</span> New tools factor in inflation, lifestyle choices, and health expenses with dynamic inputs.
-                      </p>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        <span className="font-medium">Current Status:</span> Exploratory phase, with potential for integration into existing pension frameworks in the coming years.
+                      </div>
                     </div>
                   </div>
-                </>
-              )}
+                </CardContent>
+              </Card>
+              
+              <div className="border border-dashed p-4 rounded-lg">
+                <h4 className="font-medium mb-3">Digital Asset Considerations for Retirement</h4>
+                <div className="space-y-3 text-sm">
+                  <p>
+                    While cryptocurrencies offer potential high returns, they come with significant risks and volatility that may not align with traditional retirement planning goals.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="bg-muted/50 p-3 rounded-lg">
+                      <h5 className="font-medium mb-1">Potential Benefits</h5>
+                      <ul className="space-y-1 text-xs">
+                        <li className="flex items-start gap-1">
+                          <TrendingUp className="h-3 w-3 text-green-500 mt-0.5" />
+                          <span>Portfolio diversification beyond traditional assets</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <TrendingUp className="h-3 w-3 text-green-500 mt-0.5" />
+                          <span>Hedge against currency devaluation and inflation</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-muted/50 p-3 rounded-lg">
+                      <h5 className="font-medium mb-1">Risk Factors</h5>
+                      <ul className="space-y-1 text-xs">
+                        <li className="flex items-start gap-1">
+                          <TrendingUp className="h-3 w-3 text-red-500 mt-0.5" />
+                          <span>High volatility not suitable for near-retirement portfolios</span>
+                        </li>
+                        <li className="flex items-start gap-1">
+                          <TrendingUp className="h-3 w-3 text-red-500 mt-0.5" />
+                          <span>Regulatory uncertainty in the Indian context</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <p className="italic text-xs text-muted-foreground mt-2">
+                    Note: Financial experts typically recommend limiting digital asset exposure to no more than 5% of your retirement portfolio, especially for those over 40 years of age.
+                  </p>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
         ) : (
