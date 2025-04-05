@@ -1,30 +1,19 @@
-import { useState } from "react";
-import { Search, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
+
+import { useState, useEffect } from "react";
+import { Search, TrendingUp, TrendingDown, BarChart3, AlertCircle, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import InvestmentRecommendations from "@/components/investments/InvestmentRecommendations";
-
-// Mock data for demonstration purposes
-const topMutualFunds = [
-  { name: "HDFC Balanced Advantage Fund", category: "Hybrid", oneYearReturn: 15.7, threeYearReturn: 12.8, fiveYearReturn: 11.2, rating: 5, trending: "up" },
-  { name: "Axis Bluechip Fund", category: "Equity", oneYearReturn: 14.2, threeYearReturn: 11.5, fiveYearReturn: 10.8, rating: 4, trending: "up" },
-  { name: "SBI Small Cap Fund", category: "Small Cap", oneYearReturn: 18.3, threeYearReturn: 15.9, fiveYearReturn: 13.6, rating: 5, trending: "down" },
-  { name: "Kotak Emerging Equity Fund", category: "Mid Cap", oneYearReturn: 16.8, threeYearReturn: 13.2, fiveYearReturn: 12.5, rating: 4, trending: "up" },
-  { name: "ICICI Prudential Value Discovery Fund", category: "Value", oneYearReturn: 13.6, threeYearReturn: 10.7, fiveYearReturn: 9.9, rating: 4, trending: "up" },
-];
-
-const topSIPOptions = [
-  { name: "SBI Blue Chip Fund", minAmount: 500, category: "Large Cap", returns: "12.8%", rating: 5 },
-  { name: "Axis Long Term Equity Fund", minAmount: 500, category: "ELSS", returns: "14.2%", rating: 4 },
-  { name: "Mirae Asset Emerging Bluechip", minAmount: 1000, category: "Large & Mid Cap", returns: "16.5%", rating: 5 },
-  { name: "DSP Midcap Fund", minAmount: 500, category: "Mid Cap", returns: "15.3%", rating: 4 },
-  { name: "Motilal Oswal Nasdaq 100 FOF", minAmount: 500, category: "International", returns: "18.1%", rating: 5 },
-];
+import { useMarketData, MutualFund, StockIndex } from "@/services/marketDataService";
+import { useQuery } from "@tanstack/react-query";
 
 interface SearchResult {
+  id?: string;
   name: string;
   category: string;
   returns?: string;
@@ -37,32 +26,54 @@ export default function StockMarket() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [activeTab, setActiveTab] = useState("explore");
+  const marketDataService = useMarketData();
+
+  // Fetch mutual funds using React Query
+  const { 
+    data: mutualFunds,
+    isLoading: isLoadingFunds
+  } = useQuery({
+    queryKey: ['mutualFunds'],
+    queryFn: marketDataService.getMutualFunds
+  });
+
+  // Fetch market indices using React Query
+  const { 
+    data: marketIndices,
+    isLoading: isLoadingIndices
+  } = useQuery({
+    queryKey: ['marketIndices'],
+    queryFn: marketDataService.getMarketIndices
+  });
+
+  // Top SIP options derived from mutual funds data
+  const topSIPOptions = mutualFunds?.slice(0, 5).map(fund => ({
+    id: fund.id,
+    name: fund.name,
+    minAmount: 500 + Math.floor(Math.random() * 10) * 100, // Random min amount between 500-1500
+    category: fund.category,
+    returns: `${fund.oneYearReturn}%`,
+    rating: fund.rating
+  })) || [];
 
   const handleSearch = () => {
-    if (!searchTerm.trim()) return;
+    if (!searchTerm.trim() || !mutualFunds) return;
     
-    // Combine and filter results from both datasets
-    const combinedResults = [
-      ...topMutualFunds.map(fund => ({
-        name: fund.name,
-        category: fund.category,
-        returns: `${fund.oneYearReturn}%`,
-        oneYearReturn: fund.oneYearReturn,
-        rating: fund.rating,
-        trending: fund.trending
-      })),
-      ...topSIPOptions.map(sip => ({
-        name: sip.name,
-        category: sip.category,
-        returns: sip.returns,
-        rating: sip.rating
-      }))
-    ].filter(item => 
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      item.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filter mutual funds based on search term
+    const filteredFunds = mutualFunds.filter(fund => 
+      fund.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      fund.category.toLowerCase().includes(searchTerm.toLowerCase())
+    ).map(fund => ({
+      id: fund.id,
+      name: fund.name,
+      category: fund.category,
+      returns: `${fund.oneYearReturn}%`,
+      oneYearReturn: fund.oneYearReturn,
+      rating: fund.rating,
+      trending: fund.trending
+    }));
     
-    setSearchResults(combinedResults);
+    setSearchResults(filteredFunds);
     setActiveTab("search");
   };
 
@@ -79,14 +90,15 @@ export default function StockMarket() {
         </p>
       </div>
 
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex flex-col sm:flex-row items-center gap-2 mb-6">
         <Input
           placeholder="Search funds, SIPs, stocks..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-md"
+          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
-        <Button onClick={handleSearch}>
+        <Button onClick={handleSearch} className="w-full sm:w-auto">
           <Search className="mr-2 h-4 w-4" />
           Search
         </Button>
@@ -158,32 +170,38 @@ export default function StockMarket() {
                 <CardDescription>Latest market trends and performance</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>NIFTY 50</span>
-                    <div className="flex items-center text-green-500">
-                      <span className="font-bold">23,450.8</span>
-                      <TrendingUp className="ml-2 h-4 w-4" />
-                      <span className="ml-1">0.75%</span>
-                    </div>
+                {isLoadingIndices ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((_, index) => (
+                      <div key={index} className="flex justify-between items-center">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>SENSEX</span>
-                    <div className="flex items-center text-green-500">
-                      <span className="font-bold">78,240.5</span>
-                      <TrendingUp className="ml-2 h-4 w-4" />
-                      <span className="ml-1">0.82%</span>
-                    </div>
+                ) : marketIndices ? (
+                  <div className="space-y-4">
+                    {marketIndices.map((index, i) => (
+                      <div key={i} className="flex justify-between items-center">
+                        <span>{index.name}</span>
+                        <div className={`flex items-center ${index.percentChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                          <span className="font-bold">{index.value.toLocaleString('en-IN')}</span>
+                          {index.percentChange >= 0 ? (
+                            <TrendingUp className="ml-2 h-4 w-4" />
+                          ) : (
+                            <TrendingDown className="ml-2 h-4 w-4" />
+                          )}
+                          <span className="ml-1">{index.percentChange.toFixed(2)}%</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>BANK NIFTY</span>
-                    <div className="flex items-center text-red-500">
-                      <span className="font-bold">48,560.3</span>
-                      <TrendingDown className="ml-2 h-4 w-4" />
-                      <span className="ml-1">0.32%</span>
-                    </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center">
+                    <AlertCircle className="h-10 w-10 text-amber-500 mb-4" />
+                    <p>Unable to load market data. Please try again later.</p>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
@@ -196,29 +214,36 @@ export default function StockMarket() {
                 <CardDescription>This month's best performing options</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>HDFC Bank</span>
-                    <div className="flex items-center text-green-500">
-                      <span className="font-bold">+18.2%</span>
-                      <TrendingUp className="ml-2 h-4 w-4" />
-                    </div>
+                {isLoadingFunds ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((_, index) => (
+                      <div key={index} className="flex justify-between items-center">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>SBI Small Cap Fund</span>
-                    <div className="flex items-center text-green-500">
-                      <span className="font-bold">+15.7%</span>
-                      <TrendingUp className="ml-2 h-4 w-4" />
-                    </div>
+                ) : mutualFunds ? (
+                  <div className="space-y-4">
+                    {mutualFunds
+                      .sort((a, b) => b.oneYearReturn - a.oneYearReturn)
+                      .slice(0, 3)
+                      .map((fund, index) => (
+                        <div key={index} className="flex justify-between items-center">
+                          <span>{fund.name}</span>
+                          <div className="flex items-center text-green-500">
+                            <span className="font-bold">+{fund.oneYearReturn.toFixed(1)}%</span>
+                            <TrendingUp className="ml-2 h-4 w-4" />
+                          </div>
+                        </div>
+                      ))}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>Mirae Asset Tax Saver</span>
-                    <div className="flex items-center text-green-500">
-                      <span className="font-bold">+12.8%</span>
-                      <TrendingUp className="ml-2 h-4 w-4" />
-                    </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center">
+                    <AlertCircle className="h-10 w-10 text-amber-500 mb-4" />
+                    <p>Unable to load fund performance data. Please try again later.</p>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -233,32 +258,84 @@ export default function StockMarket() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fund Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>1 Year Return</TableHead>
-                    <TableHead>3 Year Return</TableHead>
-                    <TableHead>5 Year Return</TableHead>
-                    <TableHead>Rating</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topMutualFunds.map((fund, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{fund.name}</TableCell>
-                      <TableCell>{fund.category}</TableCell>
-                      <TableCell className={`font-medium ${fund.oneYearReturn > 15 ? 'text-green-500' : ''}`}>
-                        {fund.oneYearReturn}%
-                      </TableCell>
-                      <TableCell>{fund.threeYearReturn}%</TableCell>
-                      <TableCell>{fund.fiveYearReturn}%</TableCell>
-                      <TableCell className="text-amber-500">{renderRating(fund.rating)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              {isLoadingFunds ? (
+                <div className="w-full">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <p className="text-sm text-muted-foreground">Loading mutual funds data...</p>
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Fund Name</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>1 Year Return</TableHead>
+                        <TableHead>3 Year Return</TableHead>
+                        <TableHead>5 Year Return</TableHead>
+                        <TableHead>Rating</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {Array(5).fill(0).map((_, index) => (
+                        <TableRow key={index}>
+                          <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : mutualFunds ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Fund Name</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>1 Year Return</TableHead>
+                        <TableHead>3 Year Return</TableHead>
+                        <TableHead>5 Year Return</TableHead>
+                        <TableHead>Risk</TableHead>
+                        <TableHead>Rating</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {mutualFunds.map((fund, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{fund.name}</TableCell>
+                          <TableCell>{fund.category}</TableCell>
+                          <TableCell className={`font-medium ${fund.oneYearReturn > 15 ? 'text-green-500' : ''}`}>
+                            {fund.oneYearReturn}%
+                          </TableCell>
+                          <TableCell>{fund.threeYearReturn}%</TableCell>
+                          <TableCell>{fund.fiveYearReturn}%</TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              fund.riskLevel === "Low" ? "outline" : 
+                              fund.riskLevel === "Moderate" ? "secondary" : 
+                              "default"
+                            }>
+                              {fund.riskLevel}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-amber-500">{renderRating(fund.rating)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <AlertCircle className="h-12 w-12 text-amber-500 mb-4" />
+                  <p className="text-lg font-medium mb-2">Unable to load mutual funds data</p>
+                  <p className="text-sm text-muted-foreground mb-4">Please check your connection and try again</p>
+                  <Button onClick={() => window.location.reload()}>Refresh</Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -272,33 +349,60 @@ export default function StockMarket() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fund Name</TableHead>
-                    <TableHead>Minimum SIP Amount</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Expected Returns</TableHead>
-                    <TableHead>Rating</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topSIPOptions.map((sip, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{sip.name}</TableCell>
-                      <TableCell>₹{sip.minAmount}</TableCell>
-                      <TableCell>{sip.category}</TableCell>
-                      <TableCell className="font-medium text-green-500">{sip.returns}</TableCell>
-                      <TableCell className="text-amber-500">{renderRating(sip.rating)}</TableCell>
+              {isLoadingFunds ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Fund Name</TableHead>
+                      <TableHead>Minimum SIP Amount</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Expected Returns</TableHead>
+                      <TableHead>Rating</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <div className="mt-6">
-                <p className="text-sm text-muted-foreground">
-                  * Returns shown are historical and not guaranteed for future performance. Please read all scheme related documents and consult your financial advisor before investing.
-                </p>
-              </div>
+                  </TableHeader>
+                  <TableBody>
+                    {Array(5).fill(0).map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Fund Name</TableHead>
+                        <TableHead>Minimum SIP Amount</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Expected Returns</TableHead>
+                        <TableHead>Rating</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {topSIPOptions.map((sip, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{sip.name}</TableCell>
+                          <TableCell>₹{sip.minAmount}</TableCell>
+                          <TableCell>{sip.category}</TableCell>
+                          <TableCell className="font-medium text-green-500">{sip.returns}</TableCell>
+                          <TableCell className="text-amber-500">{renderRating(sip.rating)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  <div className="mt-6">
+                    <p className="text-sm text-muted-foreground">
+                      * Returns shown are historical and not guaranteed for future performance. Please read all scheme related documents and consult your financial advisor before investing.
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +14,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import RetirementChart from "./RetirementChart";
 import RetirementCorpusScore from "./RetirementCorpusScore";
+import RetirementInsights from "./RetirementInsights";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface RetirementResult {
@@ -144,9 +144,10 @@ const RetirementCalculator = () => {
       </CardHeader>
       <CardContent className="space-y-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="calculator">Calculator</TabsTrigger>
             <TabsTrigger value="score">Corpus Score</TabsTrigger>
+            <TabsTrigger value="insights">AI Insights</TabsTrigger>
           </TabsList>
           
           <TabsContent value="calculator" className="mt-4">
@@ -331,6 +332,29 @@ const RetirementCalculator = () => {
             {!retirementResult && (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">Complete the calculator to see your retirement corpus score</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setActiveTab("calculator")} 
+                  className="mt-4"
+                >
+                  Go to Calculator
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="insights" className="mt-4">
+            {retirementResult ? (
+              <RetirementInsights 
+                age={age}
+                requiredCorpus={retirementResult.requiredCorpus}
+                monthlyInvestment={retirementResult.monthlyInvestment}
+                yearsUntilRetirement={yearsUntilRetirement}
+                expectedReturns={expectedReturns}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Complete the calculator to get AI-powered retirement insights</p>
                 <Button 
                   variant="outline" 
                   onClick={() => setActiveTab("calculator")} 
