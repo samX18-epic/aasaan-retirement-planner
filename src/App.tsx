@@ -10,22 +10,32 @@ import News from "./pages/News";
 import StockMarket from "./pages/StockMarket";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/investments" element={<Investments />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/stock-market" element={<StockMarket />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50/30 dark:from-gray-900 dark:to-gray-950">
+        <BrowserRouter>
+          <div className="flex-1">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/investments" element={<Investments />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/stock-market" element={<StockMarket />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+        <Toaster />
+        <Sonner position="top-right" closeButton />
+      </div>
     </TooltipProvider>
   </QueryClientProvider>
 );
