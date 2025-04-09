@@ -1,9 +1,12 @@
-import { ToastActionElement, ToastProps } from "@/components/ui/toast"
-import { createContext, useContext } from "react"
 import * as React from "react"
 
-const TOAST_LIMIT = 3
-const TOAST_REMOVE_DELAY = 10000
+import type {
+  ToastActionElement,
+  ToastProps,
+} from "@/components/ui/toast"
+
+const TOAST_LIMIT = 1
+const TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -22,7 +25,7 @@ const actionTypes = {
 let count = 0
 
 function genId() {
-  count = (count + 1) % Number.MAX_VALUE
+  count = (count + 1) % Number.MAX_SAFE_INTEGER
   return count.toString()
 }
 
@@ -39,11 +42,11 @@ type Action =
     }
   | {
       type: ActionType["DISMISS_TOAST"]
-      toastId?: string
+      toastId?: ToasterToast["id"]
     }
   | {
       type: ActionType["REMOVE_TOAST"]
-      toastId?: string
+      toastId?: ToasterToast["id"]
     }
 
 interface State {
@@ -165,13 +168,9 @@ function toast({ ...props }: Toast) {
   }
 }
 
-type UseToastOptions = {
-  states?: State
-}
+function useToast() {
+  const [state, setState] = React.useState<State>(memoryState)
 
-function useToast(opts: UseToastOptions = {}) {
-  const states = opts.states ?? { toasts: [] }
-  const [state, setState] = React.useState<State>(states)
   React.useEffect(() => {
     listeners.push(setState)
     return () => {
