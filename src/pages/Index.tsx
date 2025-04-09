@@ -3,10 +3,14 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RetirementCalculator from "@/components/calculators/RetirementCalculator";
 import SipCalculator from "@/components/calculators/SipCalculator";
+import PpfCalculator from "@/components/calculators/PpfCalculator";
+import EpfCalculator from "@/components/calculators/EpfCalculator";
+import SwfCalculator from "@/components/calculators/SwfCalculator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Calculator, BarChart3, PieChart, LayoutDashboard, BookOpen } from "lucide-react";
+import { ArrowRight, Calculator, BarChart3, PiggyBank, Wallet, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   return (
@@ -64,7 +68,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <Card className="calculator-card group hover:border-primary/50">
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -75,7 +79,7 @@ const Index = () => {
                     Calculate how much you need to save for a comfortable retirement based on your current lifestyle.
                   </p>
                   <Button variant="link" asChild className="mt-auto">
-                    <Link to="/#retirement-calculator" className="flex items-center">
+                    <Link to="#retirement-calculator" className="flex items-center">
                       Try it now <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -87,12 +91,12 @@ const Index = () => {
                   <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <BarChart3 className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">SIP Calculator</h3>
+                  <h3 className="text-xl font-semibold mb-2">SIP & Lumpsum Calculator</h3>
                   <p className="text-muted-foreground mb-4">
-                    Plan your systematic investments and visualize growth over time with our easy-to-use SIP calculator.
+                    Plan your systematic investments and lumpsum contributions to visualize growth over time.
                   </p>
                   <Button variant="link" asChild className="mt-auto">
-                    <Link to="/#sip-calculator" className="flex items-center">
+                    <Link to="#sip-calculator" className="flex items-center">
                       Try it now <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -102,15 +106,15 @@ const Index = () => {
               <Card className="calculator-card group hover:border-primary/50">
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                    <PieChart className="h-6 w-6 text-primary" />
+                    <PiggyBank className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Asset Allocation</h3>
+                  <h3 className="text-xl font-semibold mb-2">PPF & EPF Calculator</h3>
                   <p className="text-muted-foreground mb-4">
-                    Get personalized recommendations for optimizing your investment portfolio for retirement.
+                    Calculate returns on government-backed retirement schemes like PPF and EPF.
                   </p>
                   <Button variant="link" asChild className="mt-auto">
-                    <Link to="/investments" className="flex items-center">
-                      Coming soon <ArrowRight className="ml-2 h-4 w-4" />
+                    <Link to="#ppf-calculator" className="flex items-center">
+                      Try it now <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </CardContent>
@@ -136,13 +140,50 @@ const Index = () => {
         <section id="sip-calculator" className="py-16 px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-finance-blue mb-4">SIP Investment Calculator</h2>
+              <h2 className="text-3xl font-bold text-finance-blue mb-4">SIP & Lumpsum Investment Calculator</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                See how your regular investments can grow over time with the power of compounding.
+                See how your investments can grow over time with the power of compounding.
               </p>
             </div>
             
             <SipCalculator />
+          </div>
+        </section>
+
+        <section id="ppf-calculator" className="py-16 px-4 bg-muted/50">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-finance-blue mb-4">Government Schemes Calculators</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Plan your long-term investments in tax-saving government schemes for retirement planning.
+              </p>
+            </div>
+
+            <Tabs defaultValue="ppf" className="w-full mb-12">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
+                <TabsTrigger value="ppf">Public Provident Fund (PPF)</TabsTrigger>
+                <TabsTrigger value="epf">Employee Provident Fund (EPF)</TabsTrigger>
+              </TabsList>
+              <TabsContent value="ppf">
+                <PpfCalculator />
+              </TabsContent>
+              <TabsContent value="epf">
+                <EpfCalculator />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
+
+        <section id="swf-calculator" className="py-16 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-finance-blue mb-4">Safe Withdrawal Fund Calculator</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Determine how much you can safely withdraw from your retirement corpus without depleting it too quickly.
+              </p>
+            </div>
+            
+            <SwfCalculator />
           </div>
         </section>
 
