@@ -10,11 +10,16 @@ import {
   X,
   TrendingUp,
   Settings,
-  LineChart
+  LineChart,
+  Sun,
+  Moon
 } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -52,6 +57,15 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme} 
+              className="rounded-full"
+            >
+              {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+              <span className="sr-only">Toggle theme</span>
+            </Button>
             <Button variant="outline" size="sm">Sign In</Button>
             <Button size="sm">Get Started</Button>
           </div>
@@ -62,7 +76,15 @@ const Navbar = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="md:hidden" 
+            onClick={toggleTheme} 
+            className="mr-2 rounded-full"
+          >
+            {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
             onClick={toggleMobileMenu}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
