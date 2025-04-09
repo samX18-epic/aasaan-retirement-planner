@@ -2,6 +2,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import NewsList from "@/components/news/NewsList";
+import BlogsList from "@/components/news/BlogsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const News = () => {
@@ -19,11 +20,12 @@ const News = () => {
           </div>
           
           <Tabs defaultValue="all" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-4 md:w-auto md:inline-grid">
+            <TabsList className="grid w-full grid-cols-5 md:w-auto md:inline-grid">
               <TabsTrigger value="all">All News</TabsTrigger>
               <TabsTrigger value="retirement">Retirement</TabsTrigger>
               <TabsTrigger value="investing">Investing</TabsTrigger>
               <TabsTrigger value="policy">Policy Updates</TabsTrigger>
+              <TabsTrigger value="blogs">Expert Blogs</TabsTrigger>
             </TabsList>
             
             <TabsContent value="all">
@@ -61,6 +63,10 @@ const News = () => {
                   </p>
                 </div>
               </div>
+            </TabsContent>
+            
+            <TabsContent value="blogs">
+              <BlogsList />
             </TabsContent>
           </Tabs>
         </div>
