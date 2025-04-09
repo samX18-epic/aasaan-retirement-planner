@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, TrendingUp, TrendingDown, BarChart3, AlertCircle, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import InvestmentRecommendations from "@/components/investments/InvestmentRecommendations";
-import { useMarketData, MutualFund, StockIndex } from "@/services/marketDataService";
+import { useMarketData } from "@/services/marketDataService";
 import { useQuery } from "@tanstack/react-query";
 
 interface SearchResult {

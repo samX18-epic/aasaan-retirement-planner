@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Calculator,
@@ -9,12 +9,12 @@ import {
   Menu,
   X,
   TrendingUp,
-  Settings,
   LineChart
 } from "lucide-react";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -33,19 +33,19 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex flex-1 items-center justify-between">
           <div className="flex items-center space-x-4 lg:space-x-6">
-            <Link to="/" className="flex items-center space-x-1 text-sm font-medium transition-colors hover:text-primary">
+            <Link to="/" className={`flex items-center space-x-1 text-sm font-medium transition-colors ${location.pathname === '/' ? 'text-primary' : 'hover:text-primary'}`}>
               <Calculator className="h-4 w-4" />
               <span>Calculators</span>
             </Link>
-            <Link to="/investments" className="flex items-center space-x-1 text-sm font-medium transition-colors hover:text-primary">
+            <Link to="/investments" className={`flex items-center space-x-1 text-sm font-medium transition-colors ${location.pathname === '/investments' ? 'text-primary' : 'hover:text-primary'}`}>
               <BarChart3 className="h-4 w-4" />
               <span>Investments</span>
             </Link>
-            <Link to="/stock-market" className="flex items-center space-x-1 text-sm font-medium transition-colors hover:text-primary">
+            <Link to="/stock-market" className={`flex items-center space-x-1 text-sm font-medium transition-colors ${location.pathname === '/stock-market' ? 'text-primary' : 'hover:text-primary'}`}>
               <LineChart className="h-4 w-4" />
               <span>Stock Market</span>
             </Link>
-            <Link to="/news" className="flex items-center space-x-1 text-sm font-medium transition-colors hover:text-primary">
+            <Link to="/news" className={`flex items-center space-x-1 text-sm font-medium transition-colors ${location.pathname === '/news' ? 'text-primary' : 'hover:text-primary'}`}>
               <Newspaper className="h-4 w-4" />
               <span>News</span>
             </Link>
@@ -76,7 +76,7 @@ const Navbar = () => {
           <div className="container space-y-4">
             <Link 
               to="/" 
-              className="flex items-center space-x-2 py-2"
+              className={`flex items-center space-x-2 py-2 ${location.pathname === '/' ? 'text-primary' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <Calculator className="h-5 w-5" />
@@ -84,7 +84,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/investments" 
-              className="flex items-center space-x-2 py-2"
+              className={`flex items-center space-x-2 py-2 ${location.pathname === '/investments' ? 'text-primary' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <BarChart3 className="h-5 w-5" />
@@ -92,7 +92,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/stock-market" 
-              className="flex items-center space-x-2 py-2"
+              className={`flex items-center space-x-2 py-2 ${location.pathname === '/stock-market' ? 'text-primary' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <LineChart className="h-5 w-5" />
@@ -100,7 +100,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/news" 
-              className="flex items-center space-x-2 py-2"
+              className={`flex items-center space-x-2 py-2 ${location.pathname === '/news' ? 'text-primary' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <Newspaper className="h-5 w-5" />

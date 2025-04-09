@@ -9,6 +9,8 @@ import Investments from "./pages/Investments";
 import News from "./pages/News";
 import StockMarket from "./pages/StockMarket";
 import NotFound from "./pages/NotFound";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,10 +21,11 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50/30 dark:from-gray-900 dark:to-gray-950">
-        <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50/30 dark:from-gray-900 dark:to-gray-950">
+          <Navbar />
           <div className="flex-1">
             <Routes>
               <Route path="/" element={<Index />} />
@@ -32,12 +35,12 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
-        </BrowserRouter>
-        <Toaster />
-        <Sonner position="top-right" closeButton />
-      </div>
-    </TooltipProvider>
-  </QueryClientProvider>
+          <Toaster />
+          <Sonner position="top-right" closeButton />
+        </div>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
