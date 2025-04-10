@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BlogCard from "./BlogCard";
 import { Button } from "@/components/ui/button";
 import { FileText, Video, Plus, Filter } from "lucide-react";
@@ -17,8 +17,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
-const DUMMY_BLOGS = [
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  author: string;
+  authorRole: string;
+  date: string;
+  readTime: string;
+  type: "article" | "video";
+  coverImage: string;
+  tags: string[];
+}
+
+interface BlogsListProps {
+  searchQuery?: string;
+}
+
+const DUMMY_BLOGS: BlogPost[] = [
   {
     id: "1",
     title: "Understanding PPF and EPF: Which is Better for Your Retirement?",
@@ -69,21 +88,38 @@ const DUMMY_BLOGS = [
   },
 ];
 
-const BlogsList = () => {
-  const [blogs, setBlogs] = useState(DUMMY_BLOGS);
+const BlogsList = ({ searchQuery = "" }: BlogsListProps) => {
+  const [blogs, setBlogs] = useState<BlogPost[]>(DUMMY_BLOGS);
+  const [filteredBlogs, setFilteredBlogs] = useState<BlogPost[]>(DUMMY_BLOGS);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [blogType, setBlogType] = useState("article");
+  const [blogType, setBlogType] = useState<"article" | "video">("article");
   const [videoUrl, setVideoUrl] = useState("");
   const [authorName, setAuthorName] = useState("");
   const [authorRole, setAuthorRole] = useState("");
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      setFilteredBlogs(
+        blogs.filter(blog => 
+          blog.title.toLowerCase().includes(query) || 
+          blog.excerpt.toLowerCase().includes(query) ||
+          blog.author.toLowerCase().includes(query) ||
+          blog.tags.some(tag => tag.toLowerCase().includes(query))
+        )
+      );
+    } else {
+      setFilteredBlogs(blogs);
+    }
+  }, [blogs, searchQuery]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const newBlog = {
+    const newBlog: BlogPost = {
       id: `${blogs.length + 1}`,
       title,
       excerpt: content.substring(0, 120) + "...",
@@ -178,7 +214,7 @@ const BlogsList = () => {
                       Type
                     </Label>
                     <div className="col-span-3">
-                      <Tabs value={blogType} onValueChange={setBlogType} className="w-full">
+                      <Tabs value={blogType} onValueChange={(value: "article" | "video") => setBlogType(value)} className="w-full">
                         <TabsList className="grid w-full grid-cols-2">
                           <TabsTrigger value="article">
                             <FileText className="h-4 w-4 mr-2" /> Article
@@ -231,34 +267,43 @@ const BlogsList = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="all" className="mb-6">
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="articles">Articles</TabsTrigger>
-          <TabsTrigger value="videos">Videos</TabsTrigger>
-        </TabsList>
-        <TabsContent value="all">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {blogs.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
-            ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="articles">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {blogs.filter(blog => blog.type === "article").map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
-            ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="videos">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {blogs.filter(blog => blog.type === "video").map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+      {filteredBlogs.length === 0 ? (
+        <Alert variant="default" className="bg-muted/50 border-muted">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            No articles or videos found. Try adjusting your search or be the first to contribute!
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <Tabs defaultValue="all" className="mb-6">
+          <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="articles">Articles</TabsTrigger>
+            <TabsTrigger value="videos">Videos</TabsTrigger>
+          </TabsList>
+          <TabsContent value="all">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              {filteredBlogs.map((blog) => (
+                <BlogCard key={blog.id} blog={blog} />
+              ))}
+            </div>
+          </TabsContent>
+          <TabsContent value="articles">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              {filteredBlogs.filter(blog => blog.type === "article").map((blog) => (
+                <BlogCard key={blog.id} blog={blog} />
+              ))}
+            </div>
+          </TabsContent>
+          <TabsContent value="videos">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              {filteredBlogs.filter(blog => blog.type === "video").map((blog) => (
+                <BlogCard key={blog.id} blog={blog} />
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 };

@@ -3,7 +3,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FileText, Video, Calendar, Clock, ChevronRight } from "lucide-react";
+import { FileText, Video, Calendar, Clock, ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface BlogPost {
   id: string;
@@ -38,64 +39,70 @@ const BlogCard = ({ blog }: BlogCardProps) => {
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={blog.coverImage}
-          alt={blog.title}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-        />
-        <div className="absolute top-3 left-3">
-          <Badge className={blog.type === "article" ? "bg-primary" : "bg-purple-600"}>
-            {blog.type === "article" ? (
-              <FileText className="h-3 w-3 mr-1" />
-            ) : (
-              <Video className="h-3 w-3 mr-1" />
-            )}
-            {blog.type === "article" ? "Article" : "Video"}
-          </Badge>
-        </div>
-      </div>
-      
-      <CardContent className="pt-6">
-        <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
-          <Calendar className="h-3 w-3" />
-          <span>{formatDate(blog.date)}</span>
-          <span className="mx-1">•</span>
-          <Clock className="h-3 w-3" />
-          <span>{blog.readTime}</span>
-        </div>
-        
-        <h3 className="text-xl font-semibold mb-2 line-clamp-2">{blog.title}</h3>
-        
-        <p className="text-muted-foreground mb-4 line-clamp-3">{blog.excerpt}</p>
-        
-        <div className="flex flex-wrap gap-2 mb-4">
-          {blog.tags.map((tag, index) => (
-            <Badge key={index} variant="outline" className="text-xs">
-              {tag}
+    <motion.div
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow">
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={blog.coverImage}
+            alt={blog.title}
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute top-3 left-3">
+            <Badge className={blog.type === "article" ? "bg-primary" : "bg-purple-600"}>
+              {blog.type === "article" ? (
+                <FileText className="h-3 w-3 mr-1" />
+              ) : (
+                <Video className="h-3 w-3 mr-1" />
+              )}
+              {blog.type === "article" ? "Article" : "Video"}
             </Badge>
-          ))}
-        </div>
-      </CardContent>
-      
-      <CardFooter className="flex justify-between items-center pt-0 pb-4">
-        <div className="flex items-center">
-          <Avatar className="h-8 w-8 mr-2">
-            <AvatarImage src="" />
-            <AvatarFallback>{getInitials(blog.author)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-sm font-medium">{blog.author}</p>
-            <p className="text-xs text-muted-foreground">{blog.authorRole}</p>
           </div>
         </div>
         
-        <Button variant="ghost" size="sm" className="text-sm">
-          Read More <ChevronRight className="h-4 w-4 ml-1" />
-        </Button>
-      </CardFooter>
-    </Card>
+        <CardContent className="pt-6 flex-grow">
+          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+            <Calendar className="h-3 w-3" />
+            <span>{formatDate(blog.date)}</span>
+            <span className="mx-1">•</span>
+            <Clock className="h-3 w-3" />
+            <span>{blog.readTime}</span>
+          </div>
+          
+          <h3 className="text-xl font-semibold mb-2 line-clamp-2">{blog.title}</h3>
+          
+          <p className="text-muted-foreground mb-4 line-clamp-3">{blog.excerpt}</p>
+          
+          <div className="flex flex-wrap gap-2 mb-4">
+            {blog.tags.map((tag, index) => (
+              <Badge key={index} variant="outline" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+        
+        <CardFooter className="flex justify-between items-center pt-0 pb-4">
+          <div className="flex items-center">
+            <Avatar className="h-8 w-8 mr-2">
+              <AvatarImage src="" />
+              <AvatarFallback>{getInitials(blog.author)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-medium">{blog.author}</p>
+              <p className="text-xs text-muted-foreground">{blog.authorRole}</p>
+            </div>
+          </div>
+          
+          <Button variant="ghost" size="sm" className="text-xs font-medium text-primary p-0 h-auto">
+            Read More <ArrowUpRight className="ml-1 h-3 w-3" />
+          </Button>
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 };
 
