@@ -97,7 +97,7 @@ const Index = () => {
                     Plan your systematic investments and lumpsum contributions to visualize growth over time.
                   </p>
                   <Button variant="link" asChild className="mt-auto">
-                    <Link to="#sip-calculator" className="flex items-center">
+                    <Link href="#sip-calculator" className="flex items-center">
                       Try it now <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -114,7 +114,7 @@ const Index = () => {
                     Calculate returns on government-backed retirement schemes like PPF and EPF.
                   </p>
                   <Button variant="link" asChild className="mt-auto">
-                    <Link to="#ppf-calculator" className="flex items-center">
+                    <Link href="#ppf-calculator" className="flex items-center">
                       Try it now <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
