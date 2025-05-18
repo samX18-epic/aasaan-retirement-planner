@@ -1,7 +1,9 @@
 
+"use client";
+
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon, ExternalLink, ArrowUpRight } from "lucide-react";
+import { CalendarIcon, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 

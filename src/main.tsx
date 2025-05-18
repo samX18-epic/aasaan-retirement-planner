@@ -1,5 +1,4 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
 
-createRoot(document.getElementById("root")!).render(<App />);
+// This file is no longer needed for Next.js
+// It's kept for backward compatibility with any imports
+// Next.js entry point is now app/layout.tsx
