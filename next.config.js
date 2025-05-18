@@ -7,6 +7,12 @@ const nextConfig = {
   transpilePackages: ['lucide-react'],
   images: {
     domains: ['images.unsplash.com'], // Add any domains for images used in your app
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
   },
   webpack(config) {
     // Support SVG imports

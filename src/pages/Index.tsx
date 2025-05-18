@@ -1,3 +1,4 @@
+"use client";
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -9,7 +10,7 @@ import SwfCalculator from "@/components/calculators/SwfCalculator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Calculator, BarChart3, PiggyBank, Wallet, TrendingUp } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
@@ -31,12 +32,12 @@ const Index = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                   <Button size="lg" asChild>
-                    <Link to="/#retirement-calculator">
+                    <Link href="/#retirement-calculator">
                       Start Planning
                     </Link>
                   </Button>
                   <Button variant="outline" size="lg" asChild>
-                    <Link to="/news">
+                    <Link href="/news">
                       Read Financial News
                     </Link>
                   </Button>
@@ -79,7 +80,7 @@ const Index = () => {
                     Calculate how much you need to save for a comfortable retirement based on your current lifestyle.
                   </p>
                   <Button variant="link" asChild className="mt-auto">
-                    <Link to="#retirement-calculator" className="flex items-center">
+                    <Link href="#retirement-calculator" className="flex items-center">
                       Try it now <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
