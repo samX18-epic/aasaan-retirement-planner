@@ -23,7 +23,7 @@ export default function RootLayout({
       <body>
         <QueryClientProvider>
           <TooltipProvider>
-            <main>{children}</main>
+            {children}
             <Toaster />
             <Sonner position="top-right" closeButton />
           </TooltipProvider>
